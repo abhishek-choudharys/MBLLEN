@@ -3,8 +3,8 @@ import numpy as np
 import scipy
 import keras
 import os
-import MBLLEN.main.Network
-import MBLLEN.main.utls
+from MBLLEN.main.Network import * 
+from MBLLEN.main.utls import *
 import time
 import cv2
 import argparse
@@ -32,7 +32,7 @@ def enhance(input, output):
     path = glob(input_folder+'/*.*')
 
     model_name = argdict["model"]
-    mbllen = Network.build_mbllen((None, None, 3))
+    mbllen = build_mbllen((None, None, 3))
     mbllen.load_weights('MBLLEN/models/'+model_name+'.h5')
     opt = keras.optimizers.Adam(lr=2 * 1e-04, beta_1=0.9, beta_2=0.999, epsilon=1e-08)
     mbllen.compile(loss='mse', optimizer=opt)
@@ -44,7 +44,7 @@ def enhance(input, output):
     hsvgamma = 8/10.
 
     img_A_path = input
-    img_A = utls.imread_color(img_A_path)
+    img_A = imread_color(img_A_path)
     img_A = img_A[np.newaxis, :]
 
     out_pred = mbllen.predict(img_A)
@@ -88,4 +88,4 @@ def enhance(input, output):
     # scipy.misc.toimage(outputs * 255, high=255, low=0, cmin=0, cmax=255).save(img_name)
     outputs = np.minimum(outputs, 1.0)
     outputs = np.maximum(outputs, 0.0)
-    utls.imwrite(img_name, outputs)
+    imwrite(img_name, outputs)
